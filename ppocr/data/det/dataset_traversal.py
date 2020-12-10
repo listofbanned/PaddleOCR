@@ -31,7 +31,7 @@ class TrainReader(object):
     def __init__(self, params):
         self.num_workers = params['num_workers']
         self.label_file_path = params['label_file_path']
-        print(self.label_file_path)
+        #print(self.label_file_path)
         self.use_mul_data = False
         if isinstance(self.label_file_path, list):
             self.use_mul_data = True
@@ -49,7 +49,7 @@ class TrainReader(object):
             img_id_list = list(range(img_num))
             random.shuffle(img_id_list)
             if sys.platform == "win32" and self.num_workers != 1:
-                print("multiprocess is not fully compatible with Windows."
+                #print("multiprocess is not fully compatible with Windows."
                       "num_workers will be 1.")
                 self.num_workers = 1
             for img_id in range(process_id, img_num, self.num_workers):
@@ -63,7 +63,7 @@ class TrainReader(object):
             batch_size = 1000
             data_source_list = self.label_file_path
             batch_size_list = list(map(int, [max(1.0, batch_size * x) for x in self.data_ratio_list]))
-            print(self.data_ratio_list, batch_size_list)
+            #print(self.data_ratio_list, batch_size_list)
 
             data_filename_list, data_size_list, fetch_record_list = [], [], []
             for data_source in data_source_list:
@@ -92,7 +92,7 @@ class TrainReader(object):
                     fetch_record_list[i] = fetch_record + bs
 
             if sys.platform == "win32":
-                print("multiprocess is not fully compatible with Windows."
+                #print("multiprocess is not fully compatible with Windows."
                       "num_workers will be 1.")
                 self.num_workers = 1
 
@@ -105,7 +105,7 @@ class TrainReader(object):
         def batch_iter_reader():
             batch_outs = []
             if self.use_mul_data:
-                print("Sample date from multiple datasets!")
+                #print("Sample date from multiple datasets!")
                 for outs in sample_iter_reader_mul():
                     batch_outs.append(outs)
                     if len(batch_outs) == self.batch_size:

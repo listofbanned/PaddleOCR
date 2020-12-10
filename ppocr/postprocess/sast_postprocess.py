@@ -276,7 +276,7 @@ class SASTPostProcess(object):
             p_border = border_list[ino].transpose((1,2,0))
             p_tvo = tvo_list[ino].transpose((1,2,0))
             p_tco = tco_list[ino].transpose((1,2,0))
-            # print(p_score.shape, p_border.shape, p_tvo.shape, p_tco.shape)
+            # #print(p_ssauron.shape, p_border.shape, p_tvo.shape, p_tco.shape)
             ratio_h, ratio_w, src_h, src_w = ratio_list[ino]
 
             poly_list = self.detect_sast(p_score, p_tvo, p_border, p_tco, ratio_w, ratio_h, src_w, src_h, 

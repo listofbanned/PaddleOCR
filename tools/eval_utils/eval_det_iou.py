@@ -83,7 +83,7 @@ class DetectionIoUEvaluator(object):
 
         evaluationLog = ""
 
-        # print(len(gt))
+        # #print(len(gt))
         for n in range(len(gt)):
             points = gt[n]['points']
             # transcription = gt[n]['text']
@@ -201,7 +201,7 @@ class DetectionIoUEvaluator(object):
             matchedSum) / numGlobalCareDet
         methodHmean = 0 if methodRecall + methodPrecision == 0 else 2 * \
             methodRecall * methodPrecision / (methodRecall + methodPrecision)
-        # print(methodRecall, methodPrecision, methodHmean)
+        # #print(methodRecall, methodPrecision, methodHmean)
         # sys.exit(-1)
         methodMetrics = {
             'precision': methodPrecision,
@@ -232,4 +232,4 @@ if __name__ == '__main__':
     for gt, pred in zip(gts, preds):
         results.append(evaluator.evaluate_image(gt, pred))
     metrics = evaluator.combine_results(results)
-    print(metrics)
+    #print(metrics)

@@ -33,7 +33,7 @@ class DBHead(object):
         self.k = params['k']
         self.inner_channels = params['inner_channels']
         self.C, self.H, self.W = params['image_shape']
-        print(self.C, self.H, self.W)
+        #print(self.C, self.H, self.W)
 
     def binarize(self, x):
         conv1 = fluid.layers.conv2d(

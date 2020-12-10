@@ -15,7 +15,6 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from ppocr.utils.utility import enable_static_mode
 
 import os
 import sys
@@ -42,6 +41,7 @@ from paddle import fluid
 from ppocr.utils.utility import initial_logger
 logger = initial_logger()
 from ppocr.utils.save_load import init_model
+
 
 
 def main():
@@ -72,5 +72,4 @@ def main():
 
 
 if __name__ == '__main__':
-    enable_static_mode()
     main()

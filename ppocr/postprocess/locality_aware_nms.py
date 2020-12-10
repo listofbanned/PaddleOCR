@@ -36,7 +36,7 @@ def intersection_iog(g, p):
     #union = g.area + p.area - inter
     union = p.area
     if union == 0:
-        print("p_area is very small")
+        #print("p_area is very small")
         return 0
     else:
         return inter / union

@@ -158,7 +158,7 @@ class DBProcessTest(object):
         self.resize_type = 0
         if 'test_image_shape' in params:
             self.image_shape = params['test_image_shape']
-            # print(self.image_shape)
+            # #print(self.image_shape)
             self.resize_type = 1
         if 'max_side_len' in params:
             self.max_side_len = params['max_side_len']
@@ -206,7 +206,7 @@ class DBProcessTest(object):
                 return None, (None, None)
             im = cv2.resize(im, (int(resize_w), int(resize_h)))
         except:
-            print(im.shape, resize_w, resize_h)
+            #print(im.shape, resize_w, resize_h)
             sys.exit(0)
         ratio_h = resize_h / float(h)
         ratio_w = resize_w / float(w)

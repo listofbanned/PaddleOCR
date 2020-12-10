@@ -29,13 +29,13 @@ import signal
 
 # handle terminate reader process, do not print stack frame
 def _reader_quit(signum, frame):
-    print("Reader process exit.")
+    #print("Reader process exit.")
     sys.exit()
 
 
 def _term_group(sig_num, frame):
-    print('pid {} terminated, terminate group '
-          '{}...'.format(os.getpid(), os.getpgrp()))
+    #print('pid {} terminated, terminate group '
+          # '{}...'.format(os.getpid(), os.getpgrp()))
     os.killpg(os.getpgid(os.getpid()), signal.SIGKILL)
 
 

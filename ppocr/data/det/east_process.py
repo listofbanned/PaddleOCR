@@ -408,7 +408,7 @@ class EASTProcessTrain(object):
         text_polys[:, :, 0] *= ratio
         text_polys[:, :, 1] *= ratio
         _, _, new_h, new_w = im.shape
-        #         print(im.shape)
+        #         #print(im.shape)
         #         self.draw_img_polys(im, text_polys)
         score_map, geo_map, training_mask = self.generate_quad(
             (new_h, new_w), text_polys, text_tags)
@@ -460,7 +460,7 @@ class EASTProcessTest(object):
         self.resize_type = 0
         if 'test_image_shape' in params:
             self.image_shape = params['test_image_shape']
-            # print(self.image_shape)
+            # #print(self.image_shape)
             self.resize_type = 1
         if 'max_side_len' in params:
             self.max_side_len = params['max_side_len']
@@ -508,7 +508,7 @@ class EASTProcessTest(object):
                 return None, (None, None)
             im = cv2.resize(im, (int(resize_w), int(resize_h)))
         except:
-            print(im.shape, resize_w, resize_h)
+            #print(im.shape, resize_w, resize_h)
             sys.exit(0)
         ratio_h = resize_h / float(h)
         ratio_w = resize_w / float(w)

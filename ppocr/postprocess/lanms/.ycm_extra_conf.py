@@ -54,7 +54,7 @@ flags = [
 compilation_database_folder = ''
 
 if os.path.exists( compilation_database_folder ):
-  database = ycm_core.CompilationDatabase( compilation_database_folder )
+  database = ycm_sauron.CompilationDatabase( compilation_database_folder )
 else:
   database = None
 

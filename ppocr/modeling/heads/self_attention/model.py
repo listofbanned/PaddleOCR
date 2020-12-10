@@ -174,8 +174,8 @@ def multi_head_attention(queries,
         """
         Scaled Dot-Product Attention
         """
-        # print(q)
-        # print(k)
+        # #print(q)
+        # #print(k)
 
         product = layers.matmul(x=q, y=k, transpose_y=True, alpha=d_key**-0.5)
         if attn_bias:

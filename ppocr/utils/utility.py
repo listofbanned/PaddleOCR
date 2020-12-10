@@ -62,8 +62,8 @@ def get_check_reader_params(mode):
 
 def get_image_file_list(img_file):
     imgs_lists = []
-    if img_file is None or not os.path.exists(img_file):
-        raise Exception("not found any img file in {}".format(img_file))
+    # if img_file is None or not os.path.exists(img_file):
+    #     raise Exception("not found any img file in {}".format(img_file))
 
     img_end = {'jpg', 'bmp', 'png', 'jpeg', 'rgb', 'tif', 'tiff', 'gif', 'GIF'}
     if os.path.isfile(img_file) and imghdr.what(img_file) in img_end:

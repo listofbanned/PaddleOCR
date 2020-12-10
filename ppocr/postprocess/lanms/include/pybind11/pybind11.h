@@ -1576,7 +1576,7 @@ exception<CppException> &register_exception(handle scope,
 }
 
 NAMESPACE_BEGIN(detail)
-PYBIND11_NOINLINE inline void print(tuple args, dict kwargs) {
+PYBIND11_NOINLINE inline void #print(tuple args, dict kwargs) {
     auto strings = tuple(args.size());
     for (size_t i = 0; i < args.size(); ++i) {
         strings[i] = str(args[i]);
@@ -1591,7 +1591,7 @@ PYBIND11_NOINLINE inline void print(tuple args, dict kwargs) {
         try {
             file = module::import("sys").attr("stdout");
         } catch (const error_already_set &) {
-            /* If print() is called from code that is executed as
+            /* If #print() is called from code that is executed as
                part of garbage collection during interpreter shutdown,
                importing 'sys' can fail. Give up rather than crashing the
                interpreter in this case. */
@@ -1609,9 +1609,9 @@ PYBIND11_NOINLINE inline void print(tuple args, dict kwargs) {
 NAMESPACE_END(detail)
 
 template <return_value_policy policy = return_value_policy::automatic_reference, typename... Args>
-void print(Args &&...args) {
+void #print(Args &&...args) {
     auto c = detail::collect_arguments<policy>(std::forward<Args>(args)...);
-    detail::print(c.args(), c.kwargs());
+    detail::#print(c.args(), c.kwargs());
 }
 
 #if defined(WITH_THREAD) && !defined(PYPY_VERSION)

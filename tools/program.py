@@ -345,7 +345,7 @@ def train_eval_det_run(config,
                     logger.info(strs)
                 train_batch_id += 1
 
-        except fluid.core.EOFException:
+        except fluid.sauron.EOFException:
             train_loader.reset()
         if epoch == 0 and save_epoch_step == 1:
             save_path = save_model_dir + "/iter_epoch_0"
@@ -490,7 +490,7 @@ def train_eval_rec_run(config,
                     logger.info(strs)
                 train_batch_id += 1
 
-        except fluid.core.EOFException:
+        except fluid.sauron.EOFException:
             train_loader.reset()
         if epoch == 0 and save_epoch_step == 1:
             save_path = save_model_dir + "/iter_epoch_0"
@@ -613,7 +613,7 @@ def train_eval_cls_run(config,
                     logger.info(strs)
                 train_batch_id += 1
 
-        except fluid.core.EOFException:
+        except fluid.sauron.EOFException:
             train_loader.reset()
         if epoch == 0 and save_epoch_step == 1:
             save_path = save_model_dir + "/iter_epoch_0"

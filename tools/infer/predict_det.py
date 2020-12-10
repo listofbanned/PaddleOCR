@@ -27,8 +27,8 @@ import sys
 import paddle.fluid as fluid
 
 import tools.infer.utility as utility
-from ppocr.utils.utility import initial_logger
-logger = initial_logger()
+# from ppocr.utils.utility import initial_logger
+# logger = initial_logger()
 from ppocr.utils.utility import get_image_file_list, check_and_read_gif
 from ppocr.data.det.sast_process import SASTProcessTest
 from ppocr.data.det.east_process import EASTProcessTest
@@ -76,8 +76,7 @@ class TextDetector(object):
             sys.exit(0)
         if args.use_pdserving is False:
             self.use_zero_copy_run = args.use_zero_copy_run
-            self.predictor, self.input_tensor, self.output_tensors =\
-                utility.create_predictor(args, mode="det")
+            self.predictor, self.input_tensor, self.output_tensors = utility.create_predictor(args, mode="det")
 
     def order_points_clockwise(self, pts):
         """
@@ -177,7 +176,7 @@ if __name__ == "__main__":
     text_detector = TextDetector(args)
     count = 0
     total_time = 0
-    draw_img_save = os.path.join(".", "inference_results")
+    draw_img_save = "./inference_results"
     if not os.path.exists(draw_img_save):
         os.makedirs(draw_img_save)
     for image_file in image_file_list:
@@ -191,13 +190,10 @@ if __name__ == "__main__":
         if count > 0:
             total_time += elapse
         count += 1
-        logger.info("The predicted time of img: {} is  {}:".format(image_file,
-                                                                   elapse))
+        #print("Predict time of %s:" % image_file, elapse)
         src_im = utility.draw_text_det_res(dt_boxes, image_file)
         img_name_pure = image_file.split("/")[-1]
         cv2.imwrite(
             os.path.join(draw_img_save, "det_res_%s" % img_name_pure), src_im)
-        logger.info("The visualized img saved in {}".format(
-            os.path.join(draw_img_save, "det_res_%s" % img_name_pure)))
     if count > 1:
-        logger.info("Avg Time:", total_time / (count - 1))
+        print("Avg Time:", total_time / (count - 1))

@@ -14,9 +14,8 @@
 
 import argparse
 import os, sys
-from ppocr.utils.utility import initial_logger
-
-logger = initial_logger()
+# from ppocr.utils.utility import initial_logger
+# logger = initial_logger()
 from paddle.fluid.core import PaddleTensor
 from paddle.fluid.core import AnalysisConfig
 from paddle.fluid.core import create_paddle_predictor
@@ -28,55 +27,56 @@ import math
 
 
 def parse_args():
+    path = sys.path[0]
     def str2bool(v):
         return v.lower() in ("true", "t", "1")
 
     parser = argparse.ArgumentParser()
     # params for prediction engine
-    parser.add_argument("--use_gpu", type=str2bool, default=True)
+    parser.add_argument("--use_gpu", type=str2bool, default=False)
     parser.add_argument("--ir_optim", type=str2bool, default=True)
-    parser.add_argument("--use_tensorrt", type=str2bool, default=False)
+    parser.add_argument("--use_tensorrt", type=str2bool, default=True)
     parser.add_argument("--gpu_mem", type=int, default=8000)
 
     # params for text detector
-    parser.add_argument("--image_dir", type=str)
-    parser.add_argument("--det_algorithm", type=str, default='DB')
-    parser.add_argument("--det_model_dir", type=str)
+    parser.add_argument("--image_dir", type=str, required=False)
+    parser.add_argument("--det_algorithm", type=str, default='EAST') # default: DB
+    parser.add_argument("--det_model_dir", type=str, default=f'{path}/sauron/modules/OCR/inference/det_east')
     parser.add_argument("--det_max_side_len", type=float, default=960)
 
-    # DB parmas
+    # DB params
     parser.add_argument("--det_db_thresh", type=float, default=0.3)
     parser.add_argument("--det_db_box_thresh", type=float, default=0.5)
     parser.add_argument("--det_db_unclip_ratio", type=float, default=1.6)
 
-    # EAST parmas
+    # EAST params
     parser.add_argument("--det_east_score_thresh", type=float, default=0.8)
     parser.add_argument("--det_east_cover_thresh", type=float, default=0.1)
     parser.add_argument("--det_east_nms_thresh", type=float, default=0.2)
 
-    # SAST parmas
+    # SAST params
     parser.add_argument("--det_sast_score_thresh", type=float, default=0.5)
     parser.add_argument("--det_sast_nms_thresh", type=float, default=0.2)
     parser.add_argument("--det_sast_polygon", type=bool, default=False)
 
     # params for text recognizer
     parser.add_argument("--rec_algorithm", type=str, default='CRNN')
-    parser.add_argument("--rec_model_dir", type=str)
-    parser.add_argument("--rec_image_shape", type=str, default="3, 32, 320")
-    parser.add_argument("--rec_char_type", type=str, default='ch')
+    parser.add_argument("--rec_model_dir", type=str, default=f'{path}/sauron/modules/OCR/inference/starnet') # best for doc
+    parser.add_argument("--rec_image_shape", type=str, default='3, 32, 100') # default: 3, 32, 320
+    parser.add_argument("--rec_char_type", type=str, default='en')
     parser.add_argument("--rec_batch_num", type=int, default=6)
-    parser.add_argument("--max_text_length", type=int, default=25)
+    parser.add_argument("--max_text_length", type=int, default=50)
     parser.add_argument(
         "--rec_char_dict_path",
         type=str,
         default="./ppocr/utils/ppocr_keys_v1.txt")
     parser.add_argument("--use_space_char", type=str2bool, default=True)
     parser.add_argument(
-        "--vis_font_path", type=str, default="./doc/simfang.ttf")
+        "--vis_font_path", type=str, default=f'{path}/sauron/modules/OCR/doc/OpenSans-Regular.ttf')
 
     # params for text classifier
     parser.add_argument("--use_angle_cls", type=str2bool, default=False)
-    parser.add_argument("--cls_model_dir", type=str)
+    parser.add_argument("--cls_model_dir", type=str, default=False)
     parser.add_argument("--cls_image_shape", type=str, default="3, 48, 192")
     parser.add_argument("--label_list", type=list, default=['0', '180'])
     parser.add_argument("--cls_batch_num", type=int, default=30)
@@ -109,15 +109,15 @@ def create_predictor(args, mode):
         )
 
     if model_dir is None:
-        logger.info("not find {} model file path {}".format(mode, model_dir))
+        print("not find {} model file path {}".format(mode, model_dir))
         sys.exit(0)
     model_file_path = model_dir + "/model"
     params_file_path = model_dir + "/params"
     if not os.path.exists(model_file_path):
-        logger.info("not find model file path {}".format(model_file_path))
+        print("not find model file path {}".format(model_file_path))
         sys.exit(0)
     if not os.path.exists(params_file_path):
-        logger.info("not find params file path {}".format(params_file_path))
+        print("not find params file path {}".format(params_file_path))
         sys.exit(0)
 
     config = AnalysisConfig(model_file_path, params_file_path)
@@ -184,7 +184,7 @@ def draw_ocr(image,
              txts=None,
              scores=None,
              drop_score=0.5,
-             font_path="./doc/simfang.ttf"):
+             font_path="./doc/OpenSans-Regular.ttf"):
     """
     Visualize the results of OCR detection and recognition
     args:
@@ -225,21 +225,17 @@ def draw_ocr_box_txt(image,
                      txts,
                      scores=None,
                      drop_score=0.5,
-                     font_path="./doc/simfang.ttf"):
+                     font_path="./doc/OpenSans-Regular.ttf"):
     h, w = image.height, image.width
     img_left = image.copy()
     img_right = Image.new('RGB', (w, h), (255, 255, 255))
 
-    import random
-
-    random.seed(0)
     draw_left = ImageDraw.Draw(img_left)
     draw_right = ImageDraw.Draw(img_right)
     for idx, (box, txt) in enumerate(zip(boxes, txts)):
         if scores is not None and scores[idx] < drop_score:
             continue
-        color = (random.randint(0, 255), random.randint(0, 255),
-                 random.randint(0, 255))
+        color = (0, 255, 255)
         draw_left.polygon(box, fill=color)
         draw_right.polygon(
             [
@@ -302,7 +298,7 @@ def text_visual(texts,
                 img_h=400,
                 img_w=600,
                 threshold=0.,
-                font_path="./doc/simfang.ttf"):
+                font_path="./doc/OpenSans-Regular.ttf"):
     """
     create new blank img and draw txt on it
     args:

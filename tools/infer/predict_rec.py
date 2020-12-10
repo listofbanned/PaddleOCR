@@ -319,7 +319,7 @@ def main(args):
     try:
         rec_res, predict_time = text_recognizer(img_list)
     except Exception as e:
-        print(e)
+        #print(e)
         logger.info(
             "ERROR!!!! \n"
             "Please read the FAQ: https://github.com/PaddlePaddle/PaddleOCR#faq \n"

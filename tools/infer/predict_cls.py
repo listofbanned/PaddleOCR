@@ -134,7 +134,7 @@ def main(args):
     try:
         img_list, cls_res, predict_time = text_classifier(img_list)
     except Exception as e:
-        print(e)
+        #print(e)
         exit()
     for ino in range(len(img_list)):
         print("Predicts of %s:%s" % (valid_image_file_list[ino], cls_res[ino]))

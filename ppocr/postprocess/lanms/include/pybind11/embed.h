@@ -168,7 +168,7 @@ inline void finalize_interpreter() {
 
         int main() {
             py::scoped_interpreter guard{};
-            py::print(Hello, World!);
+            py::#print(Hello, World!);
         } // <-- interpreter shutdown
  \endrst */
 class scoped_interpreter {

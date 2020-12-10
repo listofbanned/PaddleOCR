@@ -19,9 +19,6 @@ sys.path.append(__dir__)
 sys.path.append(os.path.abspath(os.path.join(__dir__, '../..')))
 
 import tools.infer.utility as utility
-from ppocr.utils.utility import initial_logger
-
-logger = initial_logger()
 import cv2
 import tools.infer.predict_det as predict_det
 import tools.infer.predict_rec as predict_rec
@@ -30,9 +27,7 @@ import copy
 import numpy as np
 import math
 import time
-from ppocr.utils.utility import get_image_file_list, check_and_read_gif
 from PIL import Image
-from tools.infer.utility import draw_ocr
 from tools.infer.utility import draw_ocr_box_txt
 
 
@@ -81,12 +76,12 @@ class TextSystem(object):
         bbox_num = len(img_crop_list)
         for bno in range(bbox_num):
             cv2.imwrite("./output/img_crop_%d.jpg" % bno, img_crop_list[bno])
-            print(bno, rec_res[bno])
+            #print(bno, rec_res[bno])
 
     def __call__(self, img):
         ori_im = img.copy()
         dt_boxes, elapse = self.text_detector(img)
-        print("dt_boxes num : {}, elapse : {}".format(len(dt_boxes), elapse))
+        #print("dt_boxes num : {}, elapse : {}".format(len(dt_boxes), elapse))
         if dt_boxes is None:
             return None, None
         img_crop_list = []
@@ -100,10 +95,10 @@ class TextSystem(object):
         if self.use_angle_cls:
             img_crop_list, angle_list, elapse = self.text_classifier(
                 img_crop_list)
-            print("cls num  : {}, elapse : {}".format(
-                len(img_crop_list), elapse))
+            #print("cls num  : {}, elapse : {}".format(
+                # len(img_crop_list), elapse))
         rec_res, elapse = self.text_recognizer(img_crop_list)
-        print("rec_res num  : {}, elapse : {}".format(len(rec_res), elapse))
+        #print("rec_res num  : {}, elapse : {}".format(len(rec_res), elapse))
         # self.print_draw_crop_rec_res(img_crop_list, rec_res)
         return dt_boxes, rec_res
 
@@ -121,8 +116,7 @@ def sorted_boxes(dt_boxes):
     _boxes = list(sorted_boxes)
 
     for i in range(num_boxes - 1):
-        if abs(_boxes[i + 1][0][1] - _boxes[i][0][1]) < 10 and \
-                (_boxes[i + 1][0][0] < _boxes[i][0][0]):
+        if abs(_boxes[i + 1][0][1] - _boxes[i][0][1]) < 10 and (_boxes[i + 1][0][0] < _boxes[i][0][0]):
             tmp = _boxes[i]
             _boxes[i] = _boxes[i + 1]
             _boxes[i + 1] = tmp
@@ -130,51 +124,44 @@ def sorted_boxes(dt_boxes):
 
 
 def main(args):
-    image_file_list = get_image_file_list(args.image_dir)
+    image_file = args.image_dir
     text_sys = TextSystem(args)
     is_visualize = True
     font_path = args.vis_font_path
-    for image_file in image_file_list:
-        img, flag = check_and_read_gif(image_file)
-        if not flag:
-            img = cv2.imread(image_file)
-        if img is None:
-            logger.info("error in loading image:{}".format(image_file))
-            continue
-        starttime = time.time()
-        dt_boxes, rec_res = text_sys(img)
-        elapse = time.time() - starttime
-        print("Predict time of %s: %.3fs" % (image_file, elapse))
 
-        drop_score = 0.5
-        dt_num = len(dt_boxes)
-        for dno in range(dt_num):
-            text, score = rec_res[dno]
-            if score >= drop_score:
-                text_str = "%s, %.3f" % (text, score)
-                print(text_str)
+    img = cv2.imread(image_file)
+    starttime = time.time()
+    dt_boxes, rec_res = text_sys(img)
+    elapse = time.time() - starttime
+    print("Predict time: %.3fs" % elapse)
 
-        if is_visualize:
-            image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-            boxes = dt_boxes
-            txts = [rec_res[i][0] for i in range(len(rec_res))]
-            scores = [rec_res[i][1] for i in range(len(rec_res))]
+    drop_score = 0.5
+    dt_num = len(dt_boxes)
+    for dno in range(dt_num):
+        text, score = rec_res[dno]
+        if score >= drop_score:
+            text_str = "%s, %.3f" % (text, score)
+            print(text_str)
 
-            draw_img = draw_ocr_box_txt(
-                image,
-                boxes,
-                txts,
-                scores,
-                drop_score=drop_score,
-                font_path=font_path)
-            draw_img_save = "./inference_results/"
-            if not os.path.exists(draw_img_save):
-                os.makedirs(draw_img_save)
-            cv2.imwrite(
-                os.path.join(draw_img_save, os.path.basename(image_file)),
-                draw_img[:, :, ::-1])
-            print("The visualized image saved in {}".format(
-                os.path.join(draw_img_save, os.path.basename(image_file))))
+    if is_visualize:
+        image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        boxes = dt_boxes
+        txts = [rec_res[i][0] for i in range(len(rec_res))]
+        scores = [rec_res[i][1] for i in range(len(rec_res))]
+
+        draw_img = draw_ocr_box_txt(
+            image,
+            boxes,
+            txts,
+            scores,
+            drop_score=drop_score,
+            font_path=font_path)
+        draw_img_save = "./inference_results/"
+        if not os.path.exists(draw_img_save):
+            os.makedirs(draw_img_save)
+        cv2.imwrite(
+            os.path.join(draw_img_save, os.path.basename(image_file)),
+            draw_img[:, :, ::-1])
 
 
 if __name__ == "__main__":

@@ -113,11 +113,11 @@ class SASTProcessTrain(object):
             quad = self.gen_quad_from_poly(poly)
             p_area = self.quad_area(quad)
             if abs(p_area) < 1:
-                print('invalid poly')
+                #print('invalid poly')
                 continue
             if p_area > 0:
                 if tag == False:
-                    print('poly in wrong direction')
+                    #print('poly in wrong direction')
                     tag = True # reversed cases should be ignore
                 poly = poly[(0, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1), :]
                 quad = quad[(0, 3, 2, 1), :]
@@ -510,9 +510,9 @@ class SASTProcessTrain(object):
         d = a1 * b2 - a2 * b1
 
         if d == 0:
-            #print("line1", line1)
-            #print("line2", line2)
-            print('Cross point does not exist')
+            ##print("line1", line1)
+            ##print("line2", line2)
+            #print('Cross point does not exist')
             return np.array([0, 0], dtype=np.float32)
         else:
             x = (b1 * c2 - b2 * c1) / d
@@ -713,7 +713,7 @@ class SASTProcessTrain(object):
         
         # SAST head
         tvo_map, tco_map = self.generate_tvo_and_tco((self.input_size, self.input_size), text_polys, text_tags,  tcl_ratio=0.3, ds_ratio=0.25)
-        # print("test--------tvo_map shape:", tvo_map.shape)
+        # #print("test--------tvo_map shape:", tvo_map.shape)
 
         im_padded[:, :, 2] -= 0.485 * 255
         im_padded[:, :, 1] -= 0.456 * 255
